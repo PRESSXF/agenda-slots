@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: 246 243 236;
+  --card: 255 255 255;
+  --ink: 22 33 62;
+  --muted: 88 97 117;
+  --line: 222 216 203;
+  --cobalt: 37 87 214;
+  --sky: 228 235 251;
+  --coral: 207 72 44;
+  --amber: 176 112 10;
+  --rose: 178 50 98;
+  --violet: 112 78 204;
+  --night: 22 33 62;
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  @apply bg-paper font-sans text-ink antialiased;
+  background-image: radial-gradient(rgb(var(--line) / 0.55) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--cobalt));
+  outline-offset: 2px;
+}
+
+.stripes-amber {
+  background: repeating-linear-gradient(135deg, rgb(var(--amber) / 0.16) 0 5px, rgb(var(--amber) / 0.04) 5px 10px);
+}
+.stripes-coral {
+  background: repeating-linear-gradient(135deg, rgb(var(--coral) / 0.16) 0 5px, rgb(var(--coral) / 0.04) 5px 10px);
+}
+.stripes-violet {
+  background: repeating-linear-gradient(135deg, rgb(var(--violet) / 0.2) 0 5px, rgb(var(--violet) / 0.05) 5px 10px);
+}
+.stripes-rose {
+  background: repeating-linear-gradient(135deg, rgb(var(--rose) / 0.16) 0 6px, rgb(var(--rose) / 0.05) 6px 12px);
+}
+.stripes-ink {
+  background: repeating-linear-gradient(135deg, rgb(var(--ink) / 0.12) 0 5px, rgb(var(--ink) / 0.03) 5px 10px);
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--line)) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

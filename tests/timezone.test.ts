@@ -29,6 +29,13 @@ describe('deslocamento e partes locais', () => {
     expect(formatInstant(t, 'Asia/Kolkata')).toBe('2026-11-16T16:30:00+05:30')
   })
 
+  it('troca no meio de uma hora UTC (Lord Howe, +10:30 para +11:00) é lida instante a instante', () => {
+    const t = Date.parse('2025-10-04T15:30:00Z')
+    expect(getTimeZoneOffset(t - 60_000, 'Australia/Lord_Howe')).toBe(10.5 * H)
+    expect(getTimeZoneOffset(t + 60_000, 'Australia/Lord_Howe')).toBe(11 * H)
+    expect(formatInstant(t, 'Australia/Lord_Howe')).toBe('2025-10-05T02:30:00+11:00')
+  })
+
   it('valida nomes IANA', () => {
     expect(isValidTimeZone('America/Recife')).toBe(true)
     expect(isValidTimeZone('America/Atlantida')).toBe(false)

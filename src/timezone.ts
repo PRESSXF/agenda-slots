@@ -52,16 +52,53 @@ export interface ZonedParts {
   minute: number
 }
 
-/** Data e hora de parede de um instante num fuso. */
-export function getZonedParts(epochMs: number, timeZone: string): ZonedParts {
+/** Deslocamento lido direto do `Intl` (lento: um `formatToParts` por chamada). */
+function rawOffset(epochMs: number, timeZone: string): number {
   const parts = formatterFor(timeZone).formatToParts(new Date(epochMs))
   const get = (type: Intl.DateTimeFormatPartTypes) => Number(parts.find((p) => p.type === type)?.value)
-  const year = get('year')
-  const month = get('month')
-  const day = get('day')
-  const hour = get('hour') % 24
-  const minute = get('minute')
-  const second = get('second')
+  const wall = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour') % 24, get('minute'), get('second'))
+  return wall - Math.floor(epochMs / 1000) * 1000
+}
+
+const HOUR = 3_600_000
+const MAX_CACHE = 20_000
+const offsetCache = new Map<string, Map<number, number | null>>()
+
+/**
+ * Deslocamento do fuso em relação ao UTC, em milissegundos (Recife: -3 h = -10 800 000).
+ *
+ * Cache por hora cheia: se o deslocamento é igual no começo e no fim da hora, ele vale para a
+ * hora inteira (não existem duas trocas na mesma hora). Horas com troca ficam marcadas e são
+ * calculadas instante a instante. Isso tira o `Intl` do caminho quente do motor.
+ */
+export function getTimeZoneOffset(epochMs: number, timeZone: string): number {
+  let cache = offsetCache.get(timeZone)
+  if (!cache) {
+    formatterFor(timeZone)
+    cache = new Map()
+    offsetCache.set(timeZone, cache)
+  }
+  const bucket = Math.floor(epochMs / HOUR)
+  let cached = cache.get(bucket)
+  if (cached === undefined) {
+    const a = rawOffset(bucket * HOUR, timeZone)
+    const b = rawOffset(bucket * HOUR + HOUR - 1000, timeZone)
+    cached = a === b ? a : null
+    if (cache.size >= MAX_CACHE) cache.clear()
+    cache.set(bucket, cached)
+  }
+  return cached ?? rawOffset(epochMs, timeZone)
+}
+
+/** Data e hora de parede de um instante num fuso. */
+export function getZonedParts(epochMs: number, timeZone: string): ZonedParts {
+  const wall = new Date(Math.floor(epochMs / 1000) * 1000 + getTimeZoneOffset(epochMs, timeZone))
+  const year = wall.getUTCFullYear()
+  const month = wall.getUTCMonth() + 1
+  const day = wall.getUTCDate()
+  const hour = wall.getUTCHours()
+  const minute = wall.getUTCMinutes()
+  const second = wall.getUTCSeconds()
   return {
     year,
     month,
@@ -73,13 +110,6 @@ export function getZonedParts(epochMs: number, timeZone: string): ZonedParts {
     minutes: hour * 60 + minute,
     time: formatTime(hour * 60 + minute),
   }
-}
-
-/** Deslocamento do fuso em relação ao UTC, em milissegundos (Recife: -3 h = -10 800 000). */
-export function getTimeZoneOffset(epochMs: number, timeZone: string): number {
-  const p = getZonedParts(epochMs, timeZone)
-  const wall = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second)
-  return wall - Math.floor(epochMs / 1000) * 1000
 }
 
 /**
