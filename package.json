@@ -1,0 +1,86 @@
+{
+  "name": "agenda-slots",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Biblioteca TypeScript sem dependências que calcula horários livres para clínicas, salões e estúdios: expediente, folgas, feriados, intervalos, salas, turmas e fuso horário com horário de verão.",
+  "keywords": [
+    "agenda",
+    "agendamento",
+    "slots",
+    "disponibilidade",
+    "horarios",
+    "feriados",
+    "fuso-horario",
+    "typescript"
+  ],
+  "license": "UNLICENSED",
+  "author": "João Guilherme Gomes de Araújo",
+  "homepage": "https://agenda-slots.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PRESSXF/agenda-slots.git"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "/dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "vite --config site/vite.config.ts",
+    "build": "tsc -b && npm run build:lib && npm run build:site",
+    "build:lib": "tsup",
+    "build:site": "vite build --config site/vite.config.ts",
+    "preview": "vite preview --config site/vite.config.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "check:package": "node scripts/check-package.mjs",
+    "lint": "eslint .",
+    "typecheck": "tsc -b"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@fontsource-variable/figtree": "^5.3.0",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@types/node": "^22.20.5",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "@vitest/coverage-v8": "^2.1.9",
+    "autoprefixer": "^10.6.2",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.26",
+    "globals": "^15.15.0",
+    "lucide-react": "^0.468.0",
+    "postcss": "^8.5.32",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.19",
+    "tsup": "^8.5.1",
+    "typescript": "~5.6.2",
+    "typescript-eslint": "^8.72.2",
+    "vite": "^5.4.21",
+    "vitest": "^2.1.9"
+  }
+}
